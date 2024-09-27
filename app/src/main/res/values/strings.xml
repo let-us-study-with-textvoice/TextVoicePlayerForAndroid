@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">TextVoicePlayerForAndroid</string>
+    <string name="openVoice">音声ファイルを開く</string>
+    <string name="openSTS">本文ファイルを開く</string>
+    <string name="openVoiceSTS">音声と本文ファイルを開く</string>
 </resources>
