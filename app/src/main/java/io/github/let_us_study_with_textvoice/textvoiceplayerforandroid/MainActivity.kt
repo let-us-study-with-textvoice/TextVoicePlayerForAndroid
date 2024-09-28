@@ -12,13 +12,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
     lateinit var textSTS: TextView
+    lateinit var startForResult : ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
