@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                         ?.forEachLine {
                             str.append(it)
                             Log.d("logstr", str.toString())
-                            str.append(System.getProperty("line.separator"))
+                            str.append(System.lineSeparator())
                             Log.d("logstr", str.toString())
                         }
                     // StringBuilderの内容をテキストエリアに反映
