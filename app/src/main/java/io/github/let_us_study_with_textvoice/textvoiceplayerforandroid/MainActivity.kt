@@ -14,8 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
-    lateinit var textSTS: TextView
-    lateinit var startForResult : ActivityResultLauncher<Intent>
+    lateinit var startForResult: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +25,11 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        textSTS = findViewById<TextView>(R.id.textSTS)
+        val textSTS = findViewById<TextView>(R.id.edTextSTS)
 
         // 選択画面を起動
         startForResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+            ActivityResultContracts.StartActivityForResult()
         ) { result ->
             Log.d("openMenu", "OpenSTS3")
 
@@ -49,7 +48,13 @@ class MainActivity : AppCompatActivity() {
                         }
                     // StringBuilderの内容をテキストエリアに反映
                     Log.d("logstr", str.toString())
-                    textSTS.setText(str.toString())
+                    val timeStampsAndLirycsConverter =
+                        TimeStampsAndLirycsConverter.separateTimeStamp(str.toString())
+                    var senText = ""
+                    for (i in 1..timeStampsAndLirycsConverter.sentences.size - 1) {
+                        senText += timeStampsAndLirycsConverter.sentences[i]
+                    }
+                    textSTS.setText(senText)
                 }
             }
         }
@@ -97,9 +102,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openVoice() {}
-
-
-
 
 
     fun openVoiceSTS() {}
