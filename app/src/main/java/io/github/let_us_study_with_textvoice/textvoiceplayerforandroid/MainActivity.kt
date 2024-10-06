@@ -101,7 +101,9 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun openVoice() {}
+    fun openVoice() {
+
+    }
 
 
     fun openVoiceSTS() {}
