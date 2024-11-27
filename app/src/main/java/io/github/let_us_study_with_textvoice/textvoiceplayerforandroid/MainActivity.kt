@@ -25,7 +25,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val textSTS = findViewById<TextView>(R.id.edTextSTS)
+        val textSTS = findViewById<TextView>(R.id.tvTextSTS)
+        // Text Selection をenableにし、カーソルが有効になるようにする。(https://akira-watson.com/android/text-selection.html)
+        textSTS.setTextIsSelectable(true)
 
         // 選択画面を起動
         startForResult = registerForActivityResult(
@@ -57,6 +59,13 @@ class MainActivity : AppCompatActivity() {
                     textSTS.setText(senText)
                 }
             }
+        }
+
+        // textSTSをタップしたときの処理
+        textSTS.setOnClickListener {
+            val k = textSTS.selectionStart
+            val n = textSTS.selectionEnd
+            Log.d("Select", "Start:$k   End:$n  True:${k==n}")
         }
     }
 
