@@ -3,4 +3,8 @@
     <string name="openVoice">音声ファイルを開く</string>
     <string name="openSTS">本文ファイルを開く</string>
     <string name="openVoiceSTS">音声と本文ファイルを開く</string>
+
+    <string name="play">再生</string>
+    <string name="pause">一時停止</string>
+    <string name="STOP">停止</string>
 </resources>
