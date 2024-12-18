@@ -50,12 +50,17 @@ class MainActivity : AppCompatActivity() {
                         }
                     // StringBuilderの内容をテキストエリアに反映
                     Log.d("logstr", str.toString())
-                    val timeStampsAndLirycsConverter =
+                    val timeStamps =
                         TimeStampsAndLirycsConverter.separateTimeStamp(str.toString())
                     var senText = ""
-                    for (i in 1..timeStampsAndLirycsConverter.sentences.size - 1) {
-                        senText += timeStampsAndLirycsConverter.sentences[i]
+                    for (i in 1..timeStamps.size - 1) {
+                        senText += timeStamps[i].sentence
                     }
+
+                    // アクションバーのタイトルに本文のタイトルを表示(https://qiita.com/cozyk100/items/8aa1c622f3437e73e46b)
+                    // 表題からスペースを削除（https://www.choge-blog.com/programming/kotlinstringremovewhitspace/）
+                    supportActionBar?.setTitle(timeStamps[0].sentence.filterNot { it.isWhitespace() })
+
                     textSTS.setText(senText)
                 }
             }
@@ -65,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         textSTS.setOnClickListener {
             val k = textSTS.selectionStart
             val n = textSTS.selectionEnd
-            Log.d("Select", "Start:$k   End:$n  True:${k==n}")
+            Log.d("Select", "Start:$k   End:$n  True:${k == n}")
         }
     }
 

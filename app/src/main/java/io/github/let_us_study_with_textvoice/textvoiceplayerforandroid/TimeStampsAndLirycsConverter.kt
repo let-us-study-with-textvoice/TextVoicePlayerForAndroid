@@ -1,7 +1,7 @@
 package io.github.let_us_study_with_textvoice.textvoiceplayerforandroid
 
 object TimeStampsAndLirycsConverter {
-    fun separateTimeStamp(text: String): TimeStampsAndLyrics {
+    fun separateTimeStamp(text: String): MutableList<Timestamp> {
         var stsText = text
 //    stsText = "　　　　京都大学申请iPS细胞临床试验[00:01.03]　　日本京都大学研究人员的研究表明，[/00:03.74][00:04.10]把利用iPS细胞形成的血液成分[/00:07.42][00:07.68]注入再生不良性贫血的患者体内后[/00:11.00]\n"
 
@@ -34,13 +34,12 @@ object TimeStampsAndLirycsConverter {
             sentences = stsText.split(regexStart) as MutableList<String>
         }
 
-
-        for (i in 0..sentences.size){
-            Timestamp(startTimes[i], pauseTimes[i], sentences[i])
+        var timeStamps: MutableList<Timestamp> = mutableListOf()
+        for (i in 0..sentences.size - 1){
+            timeStamps.add(Timestamp(startTimes[i], pauseTimes[i], sentences[i]))
         }
 
-
-        return TimeStampsAndLyrics(startTimes, pauseTimes, sentences)
+        return timeStamps
     }
 
     // [00:01.03]または[/00:03.74]形式のタイムスタンプをミリ秒単位の値に変換する
