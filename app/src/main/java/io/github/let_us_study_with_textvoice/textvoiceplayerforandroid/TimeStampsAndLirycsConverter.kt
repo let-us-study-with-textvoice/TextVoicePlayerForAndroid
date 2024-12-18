@@ -6,8 +6,6 @@ object TimeStampsAndLirycsConverter {
 //    stsText = "　　　　京都大学申请iPS细胞临床试验[00:01.03]　　日本京都大学研究人员的研究表明，[/00:03.74][00:04.10]把利用iPS细胞形成的血液成分[/00:07.42][00:07.68]注入再生不良性贫血的患者体内后[/00:11.00]\n"
 
         // タイムスタンプの書式（正規表現様）
-        //val regexStart = Regex("\\[\\d{2}\\:\\d{2}\\.\\d{2}\\]")
-        //val regexPause = Regex("\\[\\/\\d{2}\\:\\d{2}\\.\\d{2}\\]")
         val regexStart = Regex("""\[\d{2}:\d{2}\.\d{2}]""")
         val regexPause = Regex("""\[/\d{2}:\d{2}\.\d{2}]""")
 
@@ -35,6 +33,12 @@ object TimeStampsAndLirycsConverter {
         timeStampsStart.forEach {
             sentences = stsText.split(regexStart) as MutableList<String>
         }
+
+
+        for (i in 0..sentences.size){
+            Timestamp(startTimes[i], pauseTimes[i], sentences[i])
+        }
+
 
         return TimeStampsAndLyrics(startTimes, pauseTimes, sentences)
     }
