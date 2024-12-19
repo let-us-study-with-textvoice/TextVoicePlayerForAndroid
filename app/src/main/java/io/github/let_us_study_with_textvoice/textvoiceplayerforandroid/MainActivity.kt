@@ -2,7 +2,6 @@ package io.github.let_us_study_with_textvoice.textvoiceplayerforandroid
 
 import android.app.Activity
 import android.content.Intent
-import android.icu.util.Calendar
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -13,7 +12,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.HandlerCompat
@@ -23,49 +21,53 @@ import java.io.IOException
 import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
-    lateinit var startForResult: ActivityResultLauncher<Intent>
-
+    lateinit var getContentSTS: ActivityResultLauncher<Intent>
+    lateinit var getContentSound: ActivityResultLauncher<Intent>
     val mediaPlayer = MediaPlayer()
     lateinit var btnPlay: Button
     lateinit var btnStop: Button
     lateinit var tvCurPos: TextView
+    lateinit var textSTS: TextView
+    lateinit var timeStamps: MutableList<TimeStamp>
 
-
-    val getContentSound =
-        registerForActivityResult(StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val resultIntent = it.data
-                val uri: Uri? = resultIntent?.data
-
-                mediaPlayer.apply {
-                    stop()
-                    reset()
-                }
-
-                if (uri != null) {
-                    mediaPlayer.apply {
-                        setDataSource(this@MainActivity, uri)   // 音源を設定
-                        //メディアソースの再生準備が整ったときに呼び出されるコールバックの登録する
-                        setOnPreparedListener {
-                            // 各ボタンをタップ可能に設定
-                            btnPlay.setEnabled(true)
-                            btnPlay.text = getString(R.string.play)
-                            btnStop.setEnabled(true)
-                        }
-
-                        // 再生中にメディアソースの終端に到達したときに呼び出されるコールバックを登録
-                        setOnCompletionListener {
-                            // ループ設定がされていなければ
-                            if (!isLooping()) {
-                                // 再生ボタンのラベルを「再生」に設定
-                                btnPlay.text = getString(R.string.play)
-                            }
-                        }
-                        prepareAsync()
-                    }
-                }
-            }
-        }
+//    // 音声ファイルをファイルピッカーで開く
+//    val getContentSound =
+//        registerForActivityResult(StartActivityForResult()) {
+//            if (it.resultCode == RESULT_OK) {
+//                val resultIntent = it.data
+//                val uri: Uri? = resultIntent?.data
+//
+//                mediaPlayer.apply {
+//                    stop()
+//                    reset()
+//                }
+//
+//                if (uri != null) {
+//                    mediaPlayer.apply {
+//                        setDataSource(this@MainActivity, uri)   // 音源を設定
+//                        //メディアソースの再生準備が整ったときに呼び出されるコールバックの登録する
+//                        setOnPreparedListener {
+//                            // 各ボタンをタップ可能に設定
+//                            btnPlay.setEnabled(true)
+//                            btnPlay.text = getString(R.string.play)
+//                            btnStop.setEnabled(true)
+//                        }
+//
+//                        // 再生中にメディアソースの終端に到達したときに呼び出されるコールバックを登録
+//                        setOnCompletionListener {
+//                            // ループ設定がされていなければ
+//                            if (!isLooping()) {
+//                                // 再生ボタンのラベルを「再生」に設定
+//                                btnPlay.text = getString(R.string.play)
+//                            }
+//                        }
+//
+//                        // 非同期でメディア再生を準備
+//                        prepareAsync()
+//                    }
+//                }
+//            }
+//        }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,16 +79,58 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val textSTS = findViewById<TextView>(R.id.tvTextSTS)
+        Log.d("mediaPlayer2_2_1", mediaPlayer.duration.toString())
+
+        textSTS = findViewById<TextView>(R.id.tvTextSTS)
         // Text Selection をenableにし、カーソルが有効になるようにする。(https://akira-watson.com/android/text-selection.html)
         textSTS.setTextIsSelectable(true)
+        Log.d("mediaPlayer2_2_2", mediaPlayer.duration.toString())
 
-        // 選択画面を起動
-        startForResult = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
+        // 音声ファイルをファイルピッカーで開く
+        getContentSound =
+            registerForActivityResult(StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val resultIntent = it.data
+                    val uri: Uri? = resultIntent?.data
+
+                    mediaPlayer.apply {
+                        stop()
+                        reset()
+                    }
+
+                    if (uri != null) {
+                        mediaPlayer.apply {
+                            setDataSource(this@MainActivity, uri)   // 音源を設定
+                            //メディアソースの再生準備が整ったときに呼び出されるコールバックの登録する
+                            setOnPreparedListener {
+                                // 各ボタンをタップ可能に設定
+                                btnPlay.setEnabled(true)
+                                btnPlay.text = getString(R.string.play)
+                                btnStop.setEnabled(true)
+                            }
+
+                            // 再生中にメディアソースの終端に到達したときに呼び出されるコールバックを登録
+                            setOnCompletionListener {
+                                // ループ設定がされていなければ
+                                if (!isLooping()) {
+                                    // 再生ボタンのラベルを「再生」に設定
+                                    btnPlay.text = getString(R.string.play)
+                                }
+                            }
+
+                            // 非同期でメディア再生を準備
+                            prepareAsync()
+                        }
+                    }
+                }
+            }
+
+        // STSファイルを選択する選択画面(filePicker)を起動
+        getContentSTS = registerForActivityResult(
+            StartActivityForResult()
         ) { result ->
             Log.d("openMenu", "OpenSTS3")
-
+            Log.d("mediaPlayer2_2", mediaPlayer.duration.toString())
             // 選択時の処理
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let {
@@ -99,21 +143,29 @@ class MainActivity : AppCompatActivity() {
                             Log.d("logstr", str.toString())
                             str.append(System.lineSeparator())
                             Log.d("logstr", str.toString())
+                            Log.d("mediaPlayer2_3", mediaPlayer.duration.toString())
+
                         }
                     // StringBuilderの内容をテキストエリアに反映
                     Log.d("logstr", str.toString())
-                    val timeStamps =
-                        TimeStampsAndLirycsConverter.separateTimeStamp(str.toString())
+                    timeStamps =
+                        TimeStampsAndLyricsConv.separateTimeStamp(str.toString())
+                    Log.d("mediaPlayer2_4", mediaPlayer.duration.toString())
+
                     var senText = ""
                     for (i in 1..timeStamps.size - 1) {
                         senText += timeStamps[i].sentence
+                        timeStamps[i].startTimeMiliSec
+                        timeStamps[i].pauseTimeMiliSec
                     }
+                    textSTS.setText(senText)
+                    Log.d("mediaPlayer2_5", mediaPlayer.duration.toString())
 
                     // アクションバーのタイトルに本文のタイトルを表示(https://qiita.com/cozyk100/items/8aa1c622f3437e73e46b)
                     // 表題からスペースを削除（https://www.choge-blog.com/programming/kotlinstringremovewhitspace/）
                     supportActionBar?.setTitle(timeStamps[0].sentence.filterNot { it.isWhitespace() })
+                    Log.d("mediaPlayer2_6", mediaPlayer.duration.toString())
 
-                    textSTS.setText(senText)
                 }
             }
         }
@@ -129,43 +181,64 @@ class MainActivity : AppCompatActivity() {
         btnStop = findViewById<Button>(R.id.btnStop)
         tvCurPos = findViewById<TextView>(R.id.tvCurPos)
 
+        // Play・Pauseボタンを押した時
         btnPlay.setOnClickListener {
-            if (!mediaPlayer.isPlaying) {
+            if (!mediaPlayer.isPlaying) {   // Pause又はStop状態の時
                 try {
+                    Log.d("mediaPlayer2", mediaPlayer.toString())
+                    Log.d("mediaPlayer2_1", mediaPlayer.duration.toString())
                     mediaPlayer.start()
-                    btnPlay.text = getString(R.string.pause)
                 } catch (e: IllegalStateException) {
                     e.printStackTrace()
+                } finally {
+                    if (mediaPlayer.isPlaying) btnPlay.text = getString(R.string.pause)
                 }
-            } else {
+            } else {    // Play状態の時
                 try {
                     // 再生を一時停止
                     mediaPlayer.pause()
                 } catch (e: IllegalStateException) {
                     e.printStackTrace()
+                } finally {
+                    if (!mediaPlayer.isPlaying) btnPlay.text = getString(R.string.play)
                 }
-                btnPlay.text = getString(R.string.play)
             }
         }
 
+        // Stopボタンを押した時
         btnStop.setOnClickListener {
             try {
-                //tvCurPos.text = "CurPos:" + mediaPlayer.currentPosition.toString()
                 mediaPlayer.stop()
-                mediaPlayer.prepare()
+                mediaPlayer.prepare()   // mediaPlayerを初期状態に戻す（再生位置は0に戻る）
             } catch (e: IllegalStateException) {
                 e.printStackTrace()
             } catch (e: IOException) {
                 e.printStackTrace()
+            } finally {
+                if (!mediaPlayer.isPlaying) btnPlay.text = getString(R.string.play)
             }
-            btnPlay.text = getString(R.string.play)
         }
 
         // 再生経過時間を表示する
-        timer(name = "curPos", period = 50L){
-            HandlerCompat.createAsync(mainLooper).post{
-                tvCurPos.text = "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
+
+        timer(name = "curPos", period = 50L) {
+            HandlerCompat.createAsync(mainLooper).post {
+                tvCurPos.text =
+                    "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
+//                if (mediaPlayer.isPlaying) {
+//                    var senText = ""
+//                    for (i in 1..timeStamps.size - 1) {
+//                        if (mediaPlayer.currentPosition >= timeStamps[i].startTimeMiliSec && mediaPlayer.currentPosition < timeStamps[i + 1].startTimeMiliSec) {
+//
+//                        } else {
+//
+//                            senText += timeStamps[i].sentence
+//                        }
+//                    }
+//                    textSTS.setText(senText)
+//                }
             }
+
         }
     }
 
@@ -213,7 +286,13 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
-        mediaPlayer.release()
+        mediaPlayer?.let{
+            if(it.isPlaying){
+                it.stop()
+            }
+            it.release()
+        }
+
         super.onDestroy()
     }
 
@@ -233,7 +312,7 @@ class MainActivity : AppCompatActivity() {
 
     // StrorageAccessFramewokeを使って、ファイルを選択する
     fun openSTS_a() {
-        startForResult.launch(
+        getContentSTS.launch(
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TITLE, "textSTS.txt")
