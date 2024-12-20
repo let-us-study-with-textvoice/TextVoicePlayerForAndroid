@@ -1,6 +1,5 @@
 package io.github.let_us_study_with_textvoice.textvoiceplayerforandroid
 
-import android.app.Activity
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
@@ -18,6 +17,7 @@ import androidx.core.os.HandlerCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.io.IOException
+import java.util.Timer
 import kotlin.concurrent.timer
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var tvCurPos: TextView
     lateinit var textSTS: TextView
     lateinit var timeStamps: MutableList<TimeStamp>
+    lateinit var timerCurPos: Timer
 
 //    // 音声ファイルをファイルピッカーで開く
 //    val getContentSound =
@@ -232,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 再生経過時間を表示する
-        timer(name = "curPos", period = 50L) {
+        timerCurPos = timer(name = "curPos", period = 50L) {
             HandlerCompat.createAsync(mainLooper).post {
                 tvCurPos.text =
                     "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
@@ -304,6 +305,16 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
+        Log.d("TVPonDestroy", "before_cancel")
+        timerCurPos.cancel()      // timer(name = "curPos")をcancelする事により、
+                        // mediaPlayer.currentPositionを呼ばなくなったため
+                        // mediaPlayer.currentPositionで発生していた
+                        //      IllegalStateExceptionエラーは
+                        //          at android.media.MediaPlayer.getCurrentPosition(Native Method)
+                        //          at io.github.let_us_study_with_textvoice.textvoiceplayerforandroid.MainActivity$onCreate$7$1.run(MainActivity.kt:240)
+                        //                    tvCurPos.text = "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)
+                        // 発生しなくなった。
+        Log.d("TVPonDestroy", "after_cancel")
         mediaPlayer?.let{
             if(it.isPlaying){
                 it.stop()
