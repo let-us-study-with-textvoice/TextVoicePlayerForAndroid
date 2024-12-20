@@ -237,18 +237,18 @@ class MainActivity : AppCompatActivity() {
             HandlerCompat.createAsync(mainLooper).post {
                 tvCurPos.text =
                     "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
-//                if (mediaPlayer.isPlaying) {
-//                    var senText = ""
-//                    for (i in 1..timeStamps.size - 1) {
-//                        if (mediaPlayer.currentPosition >= timeStamps[i].startTimeMiliSec && mediaPlayer.currentPosition < timeStamps[i + 1].startTimeMiliSec) {
-//
-//                        } else {
-//
-//                            senText += timeStamps[i].sentence
-//                        }
-//                    }
-//                    textSTS.setText(senText)
-//                }
+                if (mediaPlayer.isPlaying) {
+                    var senText = ""
+                    for (i in 1..timeStamps.size - 1) {
+                        if (mediaPlayer.currentPosition >= timeStamps[i].startTimeMiliSec && mediaPlayer.currentPosition < timeStamps[i + 1].startTimeMiliSec) {
+
+                        } else {
+
+                            senText += timeStamps[i].sentence
+                        }
+                    }
+                    textSTS.setText(senText)
+                }
             }
         }
     }
