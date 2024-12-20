@@ -232,10 +232,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 再生経過時間を表示する
-//        timer(name = "curPos", period = 50L) {
-//            HandlerCompat.createAsync(mainLooper).post {
-//                tvCurPos.text =
-//                    "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
+        timer(name = "curPos", period = 50L) {
+            HandlerCompat.createAsync(mainLooper).post {
+                tvCurPos.text =
+                    "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
 //                if (mediaPlayer.isPlaying) {
 //                    var senText = ""
 //                    for (i in 1..timeStamps.size - 1) {
@@ -248,8 +248,8 @@ class MainActivity : AppCompatActivity() {
 //                    }
 //                    textSTS.setText(senText)
 //                }
-//            }
-//        }
+            }
+        }
     }
 
 
