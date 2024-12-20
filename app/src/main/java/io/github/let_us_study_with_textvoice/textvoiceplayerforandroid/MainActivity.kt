@@ -81,6 +81,18 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d("mediaPlayer2_2_1", mediaPlayer.duration.toString())
 
+
+        btnPlay = findViewById<Button>(R.id.btnPlay)
+        btnPlay.setEnabled(false)
+        btnPlay.text = getString(R.string.play)
+
+        btnStop = findViewById<Button>(R.id.btnStop)
+        btnStop.text = getString(R.string.stop)
+        btnStop.setEnabled(false)
+
+        tvCurPos = findViewById<TextView>(R.id.tvCurPos)
+
+
         textSTS = findViewById<TextView>(R.id.tvTextSTS)
         // Text Selection をenableにし、カーソルが有効になるようにする。(https://akira-watson.com/android/text-selection.html)
         textSTS.setTextIsSelectable(true)
@@ -176,10 +188,10 @@ class MainActivity : AppCompatActivity() {
             val n = textSTS.selectionEnd
             Log.d("Select", "Start:$k   End:$n  True:${k == n}")
         }
-
-        btnPlay = findViewById<Button>(R.id.btnPlay)
-        btnStop = findViewById<Button>(R.id.btnStop)
-        tvCurPos = findViewById<TextView>(R.id.tvCurPos)
+//
+//        btnPlay = findViewById<Button>(R.id.btnPlay)
+//        btnStop = findViewById<Button>(R.id.btnStop)
+//        tvCurPos = findViewById<TextView>(R.id.tvCurPos)
 
         // Play・Pauseボタンを押した時
         btnPlay.setOnClickListener {
@@ -220,11 +232,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 再生経過時間を表示する
-
-        timer(name = "curPos", period = 50L) {
-            HandlerCompat.createAsync(mainLooper).post {
-                tvCurPos.text =
-                    "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
+//        timer(name = "curPos", period = 50L) {
+//            HandlerCompat.createAsync(mainLooper).post {
+//                tvCurPos.text =
+//                    "再生経過時間:" + convertMillisTo60(mediaPlayer.currentPosition)  // 一時停止した時にcurrentPosition(ミリ秒)を60進数に変換し表示する
 //                if (mediaPlayer.isPlaying) {
 //                    var senText = ""
 //                    for (i in 1..timeStamps.size - 1) {
@@ -237,9 +248,8 @@ class MainActivity : AppCompatActivity() {
 //                    }
 //                    textSTS.setText(senText)
 //                }
-            }
-
-        }
+//            }
+//        }
     }
 
 
@@ -277,11 +287,19 @@ class MainActivity : AppCompatActivity() {
     // アプリを一時的に隠した時の処理
     override fun onPause() {
         super.onPause()
-        try {
-            mediaPlayer.pause()
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        }
+//        try {
+//            mediaPlayer.pause()
+//        } catch (e: IllegalStateException) {
+//            e.printStackTrace()
+//        }
+    //      ver_0.004 音声ファイルを開いたのち、本文ファイルを開くと音声ファイルの設定が消える原因は、
+    //      本文のファイルピッカーがTextVoicePlayerアプリの上に重なり、fun onPause()が呼ばれる。
+    //      fun onPause()の中で
+    //      try {mediaPlayer.pause()} catch (e:IllegalStateException) {e.printStackTrace()}を
+    //      実行していたて、mediaPlayer.pause()を実行した時に、IllegalStateExceptionが発生。
+    //      fun onPause()の中から、
+    //      try {mediaPlayer.pause()} catch (e:IllegalStateException) {e.printStackTrace()}を
+    //      削除して解消。
     }
 
 
@@ -292,6 +310,11 @@ class MainActivity : AppCompatActivity() {
             }
             it.release()
         }
+        // ボタンを初期化する
+        btnPlay.setEnabled(false)
+        btnPlay.text = getString(R.string.pause)
+        btnStop.setEnabled(false)
+
 
         super.onDestroy()
     }
